@@ -1,4 +1,4 @@
-absl-py==0.5.0
+absl-py==0.7.0
 alembic==1.0.5
 aniso8601==4.0.1
 appnope==0.1.0
@@ -23,7 +23,7 @@ certifi==2018.10.15
 cffi==1.11.5
 chardet==3.0.4
 Click==7.0
-cloudpickle==0.5.2
+cloudpickle==1.1.1
 cma==2.6.0
 colorama==0.3.9
 contextlib2==0.5.5
@@ -62,7 +62,7 @@ Flask-WTF==0.14.2
 flatbuffers==1.10
 funcsigs==1.0.2
 future==0.17.1
-gast==0.2.0
+gast==0.2.2
 gitdb2==2.0.5
 GitPython==2.1.11
 glfw==1.7.0
@@ -98,7 +98,7 @@ jupyter-core==4.4.0
 jupyterlab==0.35.4
 jupyterlab-server==0.2.0
 Keras==2.2.4
-Keras-Applications==1.0.6
+Keras-Applications==1.0.8
 Keras-Preprocessing==1.0.5
 kfac==0.1.0
 kiwisolver==1.0.1
@@ -116,12 +116,12 @@ more-itertools==4.3.0
 mpi4py==3.0.0
 mujoco-py==1.50.1.68
 -e git+https://github.com/openai/multiagent-particle-envs.git@6ed7cac026f0eb345d4c20232bafa1dc951c68e7#egg=multiagent
-multiworld==0.0.0
+multiworld==0.1.0
 nbconvert==5.4.0
 nbformat==4.4.0
 networkx==2.2
 notebook==5.7.0
-numpy==1.15.2
+numpy==1.16.0
 numpy-stl==2.7.0
 opencv-python==4.0.0.21
 pandas==0.23.4
@@ -132,7 +132,7 @@ patsy==0.5.1
 pep8-naming==0.7.0
 pexpect==4.6.0
 pickleshare==0.7.5
-Pillow==5.3.0
+Pillow==6.2.0
 plotly==1.9.6
 pluggy==0.8.0
 poyo==0.4.2
@@ -196,9 +196,9 @@ soupsieve==1.6.2
 -e git+https://github.com/openai/spinningup.git@f67828a41e98053355e9c491dfd1de99699aa173#egg=spinup
 SQLAlchemy==1.2.11
 statsmodels==0.9.0
-tensorboard==1.12.0
-tensorflow==1.12.0
-tensorflow-probability==0.5.0
+tensorboard==1.15.0
+tensorflow==1.15.0
+tensorflow-probability==0.8.0
 termcolor==1.1.0
 terminado==0.8.1
 testfixtures==6.4.1
@@ -213,13 +213,13 @@ tqdm==4.28.1
 traitlets==4.3.2
 uritemplate==3.0.0
 urllib3==1.24.1
-waitress==1.1.0
+waitress==1.4.2
 wcwidth==0.1.7
 webargs==4.1.2
 webencodings==0.5.1
 WebOb==1.8.5
 WebTest==2.0.30
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 whichcraft==0.5.2
 widgetsnbextension==3.4.2
 WTForms==2.2.1

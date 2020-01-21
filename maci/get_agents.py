@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from maci.learners import MADDPG, MAVBAC, MASQL, ROMMEO
+from maci.learners import MADDPG, MAVBAC, MASQL, ROMMEO, MASAC
 from maci.misc.kernel import adaptive_isotropic_gaussian_kernel
 from maci.replay_buffers import SimpleReplayBuffer
 from maci.value_functions.sq_value_function import NNQFunction, NNJointQFunction
@@ -52,6 +52,50 @@ def masql_agent(model_name, i, env, M, u_range, base_kwargs, game_name='matrix')
         reward_scale=1,
         save_full_state=False)
     return agent
+
+
+def masac_agent(model_name, i, env, M, u_range, base_kwargs, game_name='matrix'):
+  joint = True
+  squash = True
+  squash_func = tf.tanh
+  sampling = False
+  if 'particle' in game_name:
+    sampling = True
+    squash_func = tf.nn.softmax
+
+  pool = SimpleReplayBuffer(env.env_specs, max_replay_buffer_size=1e6, joint=joint, agent_id=i)
+  policy = StochasticNNPolicy(env.env_specs,
+                              hidden_layer_sizes=(M, M),
+                              squash=squash, squash_func=squash_func, sampling=sampling, u_range=u_range, joint=joint,
+                              agent_id=i)
+
+  qf = NNQFunction(env_spec=env.env_specs, hidden_layer_sizes=[M, M], joint=joint, agent_id=i)
+  target_qf = NNQFunction(env_spec=env.env_specs, hidden_layer_sizes=[M, M], name='target_qf', joint=joint,
+                          agent_id=i)
+
+  plotter = None
+
+  agent = MASAC(
+    base_kwargs=base_kwargs,
+    agent_id=i,
+    env=env,
+    pool=pool,
+    qf=qf,
+    target_qf=target_qf,
+    policy=policy,
+    plotter=plotter,
+    policy_lr=3e-4,
+    qf_lr=3e-4,
+    tau=0.01,
+    value_n_particles=16,
+    td_target_update_interval=10,
+    kernel_fn=adaptive_isotropic_gaussian_kernel,
+    kernel_n_particles=32,
+    kernel_update_ratio=0.5,
+    discount=0.99,
+    reward_scale=1,
+    save_full_state=False)
+  return agent
 
 
 def get_level_k_policy(env, k, M, agent_id, u_range, opponent_conditional_policy, game_name='matrix'):
@@ -270,6 +314,7 @@ def rom_agent(model_name, i, env, M, u_range, base_kwargs, g=False, mu=1.5, game
     opponent_policy = GaussianPolicy(env.env_specs,
                                       hidden_layer_sizes=(M, M),
                                       squash=True, joint=False,
+                                     opponent_policy=True,
                                       agent_id=i, name='opponent_policy')
     conditional_policy = GaussianConditionalPolicy(env.env_specs,
                                                    cond_policy=opponent_policy,
@@ -282,6 +327,7 @@ def rom_agent(model_name, i, env, M, u_range, base_kwargs, g=False, mu=1.5, game
         target_opponent_policy = GaussianPolicy(env.env_specs,
                                          hidden_layer_sizes=(M, M),
                                          squash=True, joint=False,
+                                                opponent_policy=True,
                                          agent_id=i, name='target_opponent_policy')
         target_conditional_policy = GaussianConditionalPolicy(env.env_specs,
                                                        cond_policy=target_opponent_policy,
@@ -290,7 +336,6 @@ def rom_agent(model_name, i, env, M, u_range, base_kwargs, g=False, mu=1.5, game
                                                        opponent_policy=False,
                                                        squash=True, joint=False,
                                                        agent_id=i)
-
 
     joint_qf = NNJointQFunction(env_spec=env.env_specs, hidden_layer_sizes=[M, M], joint=joint, agent_id=i)
     target_joint_qf = NNJointQFunction(env_spec=env.env_specs, hidden_layer_sizes=[M, M], name='target_joint_qf', agent_id=i)

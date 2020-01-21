@@ -135,6 +135,7 @@ class GaussianPolicy(NNPolicy, Serializable):
             )
 
         raw_actions = tf.stop_gradient(self.distribution.x_t)
+        #self._action = tf.sigmoid(raw_actions) if self._squash else raw_actions
         self._action = tf.tanh(raw_actions) if self._squash else raw_actions
 
     def get_mu(self, observations):

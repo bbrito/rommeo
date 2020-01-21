@@ -9,7 +9,7 @@ from maci.misc import logger
 import gtimer as gt
 import datetime
 from copy import deepcopy
-from maci.get_agents import ddpg_agent, masql_agent, pr2ac_agent, rom_agent
+from maci.get_agents import ddpg_agent, masql_agent, pr2ac_agent, rom_agent, masac_agent
 
 import maci.misc.tf_utils as U
 import os
@@ -62,7 +62,7 @@ def parse_args():
     # Environment
     # ['particle-simple_spread', 'particle-simple_adversary', 'particle-simple_tag', 'particle-simple_push']
     parser.add_argument("--scenario", type=str, default="matlab_simple_spread_assigned", help="name of the scenario script")
-    parser.add_argument('-g', "--game_name", type=str, default="diff-ma_softq", help="name of the game")
+    parser.add_argument('-g', "--game_name", type=str, default="alvi-ma_softac", help="name of the game")
     parser.add_argument('-p', "--p", type=float, default=1.1, help="p")
     parser.add_argument('-mu', "--mu", type=float, default=1.5, help="mu")
     parser.add_argument('-r', "--reward_type", type=str, default="abs", help="reward type")
@@ -76,7 +76,18 @@ def parse_args():
     parser.add_argument('-re', "--repeat", type=bool, default=False, help="name of the game")
     parser.add_argument('-a', "--aux", type=bool, default=True, help="name of the game")
     parser.add_argument('-gr', "--global_reward", type=bool, default=False, help="name of the game")
-    parser.add_argument('-m', "--model_names_setting", type=str, default='MASQL_MASQL', help="models setting agent vs adv")
+    parser.add_argument('-m', "--model_names_setting", type=str, default='ROMMEO_ROMMEO', help="models setting agent vs adv")
+    # Evaluation
+    parser.add_argument("--restore", action="store_true", default=False)
+    parser.add_argument("--display", action="store_true", default=False)
+    parser.add_argument("--test", action="store_true", default=False)
+    parser.add_argument("--plot", action="store_true", default=False)
+    parser.add_argument("--benchmark", action="store_true", default=False)
+    parser.add_argument("--benchmark-iters", type=int, default=100000, help="number of iterations run for benchmarking")
+    parser.add_argument("--benchmark-dir", type=str, default="./benchmark_files/",
+                        help="directory where benchmark data is saved")
+    parser.add_argument("--plots-dir", type=str, default="./learning_curves/",
+                        help="directory where plot data is saved")
     return parser.parse_args()
 
 
@@ -164,6 +175,8 @@ def main(arglist):
                 agent = pr2ac_agent(model_name, i, env, M, u_range, base_kwargs, k=k, g=g, mu=mu, game_name=game_name, aux=arglist.aux)
             elif model_name == 'MASQL':
                 agent = masql_agent(model_name, i, env, M, u_range, base_kwargs, game_name=game_name)
+            elif model_name == 'MASAC':
+                agent = masac_agent(model_name, i, env, M, u_range, base_kwargs, game_name=game_name)
             elif model_name == 'ROMMEO':
                 agent = rom_agent(model_name, i, env, M, u_range, base_kwargs, game_name=game_name)
             else:

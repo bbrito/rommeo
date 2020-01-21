@@ -127,6 +127,17 @@ class MADiscrete(MASpace):
         self.agent_num = len(ns)
         self.agent_spaces = np.array([Discrete(n) for n in ns])
 
+class MAMultiDiscrete(MASpace):
+    """
+    Provides a classification multi-agent state spaces and action spaces,
+    so you can write generic code that applies to any Environment.
+    E.g. to choose a random action.
+    """
+
+    def __init__(self, ns):
+        self.agent_num = len(ns)
+        self.agent_spaces = np.array([MultiDiscrete(n) for n in ns])
+
 
 class MABox(MASpace):
     """
@@ -206,7 +217,7 @@ class MultiDiscrete(Space):
         """
         The dimension of the flattened vector of the tensor representation
         """
-        self.num_discrete_space
+        return self.num_discrete_space
 
     def __repr__(self):
         return "MultiDiscrete" + str(self.num_discrete_space)
