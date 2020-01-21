@@ -141,7 +141,7 @@ class MASAC(RLAlgorithm, Serializable):
         self._initial_exploration_policy = initial_exploration_policy
         self._qf1 = qf1
         self._qf2 = qf2
-        # self._vf = vf
+        self._vf = vf
         self._pool = pool
         self._plotter = plotter
 
@@ -155,7 +155,7 @@ class MASAC(RLAlgorithm, Serializable):
         self._action_prior = action_prior
 
         self._target_entropy = (
-            -np.prod(self._env.action_space.shape)
+            -np.prod(self._env.action_spaces.shape)
             if target_entropy == 'auto'
             else target_entropy)
 
@@ -218,7 +218,7 @@ class MASAC(RLAlgorithm, Serializable):
             shape=[None, self._observation_dim],
             name='next_observations_agent_{}'.format(self._agent_id))
 
-        self._actions_pl = tf.placeholder(
+        self._actions_ph = tf.placeholder(
             tf.float32, shape=[None, self._action_dim],
             name='actions_agent_{}'.format(self._agent_id))
 
@@ -234,15 +234,15 @@ class MASAC(RLAlgorithm, Serializable):
             tf.float32, shape=[None, self._opponent_action_dim],
             name='opponent_next_actions_agent_{}'.format(self._agent_id))
 
-        self._rewards_pl = tf.placeholder(
+        self._rewards_ph = tf.placeholder(
             tf.float32, shape=[None],
             name='rewards_agent_{}'.format(self._agent_id))
 
-        self._terminals_pl = tf.placeholder(
+        self._terminals_ph = tf.placeholder(
             tf.float32, shape=[None],
             name='terminals_agent_{}'.format(self._agent_id))
 
-        self._annealing_pl = tf.placeholder(
+        self._annealing_ph = tf.placeholder(
             tf.float32, shape=[],
             name='annealing_agent_{}'.format(self._agent_id))
 
@@ -267,13 +267,13 @@ class MASAC(RLAlgorithm, Serializable):
         Q-function update rule.
         """
 
-        self._qf1_t = self._qf1.get_output_for(
+        self._qf1_t = self._qf1.output_for(
             self._observations_ph, self._actions_ph, reuse=True)  # N
-        self._qf2_t = self._qf2.get_output_for(
+        self._qf2_t = self._qf2.output_for(
             self._observations_ph, self._actions_ph, reuse=True)  # N
 
         with tf.variable_scope('target'):
-            vf_next_target_t = self._vf.get_output_for(self._next_observations_ph)  # N
+            vf_next_target_t = self._vf.output_for(self._next_observations_ph)  # N
             self._vf_target_params = self._vf.get_params_internal()
 
         ys = tf.stop_gradient(
@@ -316,7 +316,7 @@ class MASAC(RLAlgorithm, Serializable):
         actions, log_pi = self._policy.actions_for(observations=self._observations_ph,
                                                    with_log_pis=True)
 
-        self._vf_t = self._vf.get_output_for(self._observations_ph, reuse=True)  # N
+        self._vf_t = self._vf.output_for(self._observations_ph, reuse=True)  # N
         self._vf_params = self._vf.get_params_internal()
 
         if self._action_prior == 'normal':
@@ -327,9 +327,9 @@ class MASAC(RLAlgorithm, Serializable):
         elif self._action_prior == 'uniform':
             policy_prior_log_probs = 0.0
 
-        log_target1 = self._qf1.get_output_for(
+        log_target1 = self._qf1.output_for(
             self._observations_ph, actions, reuse=True)  # N
-        log_target2 = self._qf2.get_output_for(
+        log_target2 = self._qf2.output_for(
             self._observations_ph, actions, reuse=True)  # N
         min_log_target = tf.minimum(log_target1, log_target2)
 

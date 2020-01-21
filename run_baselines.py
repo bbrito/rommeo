@@ -62,7 +62,7 @@ def parse_args():
     # Environment
     # ['particle-simple_spread', 'particle-simple_adversary', 'particle-simple_tag', 'particle-simple_push']
     parser.add_argument("--scenario", type=str, default="matlab_simple_spread_assigned", help="name of the scenario script")
-    parser.add_argument('-g', "--game_name", type=str, default="alvi-ma_softac", help="name of the game")
+    parser.add_argument('-g', "--game_name", type=str, default="diff-ma_softac", help="name of the game")
     parser.add_argument('-p', "--p", type=float, default=1.1, help="p")
     parser.add_argument('-mu', "--mu", type=float, default=1.5, help="mu")
     parser.add_argument('-r', "--reward_type", type=str, default="abs", help="reward type")
@@ -76,7 +76,7 @@ def parse_args():
     parser.add_argument('-re', "--repeat", type=bool, default=False, help="name of the game")
     parser.add_argument('-a', "--aux", type=bool, default=True, help="name of the game")
     parser.add_argument('-gr', "--global_reward", type=bool, default=False, help="name of the game")
-    parser.add_argument('-m', "--model_names_setting", type=str, default='ROMMEO_ROMMEO', help="models setting agent vs adv")
+    parser.add_argument('-m', "--model_names_setting", type=str, default='MASAC_MASAC', help="models setting agent vs adv")
     # Evaluation
     parser.add_argument("--restore", action="store_true", default=False)
     parser.add_argument("--display", action="store_true", default=False)

@@ -9,12 +9,12 @@ from maci.misc import tf_utils
 def feedforward_net(inputs,
                     layer_sizes,
                     activation_fn=tf.nn.relu,
-                    output_nonlinearity=None):
+                    output_nonlinearity=None, name = None):
     def bias(n_units):
         return tf.get_variable(
             name='bias', shape=n_units, initializer=tf.zeros_initializer())
 
-    def linear(x, n_units, postfix=None):
+    def linear(x, n_units, postfix=None,name=None):
         input_size = x.shape[-1].value
         weight_name = 'weight' + '_' + str(postfix) if postfix else 'weight'
         weight = tf.get_variable(
@@ -34,7 +34,10 @@ def feedforward_net(inputs,
             if i == 0:
                 for j, input_tensor in enumerate(inputs):
                     # print(input_tensor.shape)
-                    tmp = linear(input_tensor, layer_size, j)
+                    if name != None:
+                        tmp = linear(input_tensor, layer_size, j,name)
+                    else:
+                        tmp = linear(input_tensor, layer_size, j)
                     # print(tmp.shape)
                     out += tmp
             else:
